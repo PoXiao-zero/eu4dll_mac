@@ -1,0 +1,3 @@
+namespace base {
+    void install();
+}

@@ -1,0 +1,3 @@
+namespace mainText {
+    void install();
+}

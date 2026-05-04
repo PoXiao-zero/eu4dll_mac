@@ -1,0 +1,3 @@
+namespace input {
+    void install();
+}

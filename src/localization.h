@@ -1,0 +1,3 @@
+namespace localization {
+    void install();
+}

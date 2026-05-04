@@ -1,0 +1,3 @@
+namespace tooltipAndButtonText {
+    void install();
+}

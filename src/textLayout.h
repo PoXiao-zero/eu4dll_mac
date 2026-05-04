@@ -1,0 +1,3 @@
+namespace textLayout {
+    void install();
+}

@@ -1,0 +1,53 @@
+name: Build and Release Mac x86_64
+
+on:
+  workflow_dispatch: # 开启手动触发按钮
+
+permissions:
+  contents: write # 赋予 Action 创建 Release 发布的写权限
+
+jobs:
+  build-and-release:
+    runs-on: macos-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Configure CMake
+        # 配置 CMake，生成目录为 build，设置为 Release 模式
+        run: cmake -B build -DCMAKE_BUILD_TYPE=Release
+
+      - name: Build Project
+        # 执行编译
+        run: cmake --build build --config Release
+
+      - name: CodeSign Ad-Hoc
+        # 对编译产物进行 Ad-hoc 签名
+        # --force 表示覆盖已有的签名(如果有的话)，--sign - 代表使用 adhoc(身份为短横线) 进行签名
+        run: |
+          codesign --force --sign - build/libeu4dll_mac.dylib
+          # 验证签名是否成功 (可选步骤，用于在 actions 日志中确认)
+          codesign --verify --verbose build/libeu4dll_mac.dylib
+
+      - name: Prepare Package
+        # 创建打包临时文件夹，将签名后的动态库和 install.sh 复制进去
+        run: |
+          mkdir release_package
+          cp build/libeu4dll_mac.dylib release_package/
+          cp install.sh release_package/
+
+      - name: Create ZIP Archive
+        # 压缩文件，名字带上自动递增的版本号 github.run_number
+        run: |
+          cd release_package
+          zip -r ../eu4dll_mac_build_${{ github.run_number }}.zip ./*
+          cd ..
+
+      - name: Publish GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: b${{ github.run_number }} # 自动创建如 v1, v2, v3 的 Tag
+          name: Release build_${{ github.run_number }} # 发布标题
+          body: New Build Version
+          files: eu4dll_mac_build_${{ github.run_number }}.zip # 绑定的压缩包文件
