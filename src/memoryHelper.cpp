@@ -8,14 +8,17 @@
 #include <mach/mach.h>
 #include <mach/mach_vm.h>
 #include <mach/vm_prot.h>
+#include <dlfcn.h>
 
 static std::vector<int> ParsePattern(const std::string &pattern) {
     std::vector<int> bytes;
     std::istringstream iss(pattern);
     std::string word;
     while (iss >> word) {
-        if (word[0] == '?') {
+        if (word == "?") {
             bytes.push_back(-1); // 模糊匹配占位符
+        } else if (word == "S") {
+            bytes.push_back(-2); // 字符串偏移占位符
         } else {
             bytes.push_back(std::strtol(word.c_str(), nullptr, 16));
         }
@@ -66,39 +69,94 @@ bool WriteMemory(uintptr_t address, const uint8_t *data, size_t size) {
     return true;
 }
 
-uintptr_t FindPattern(uintptr_t startAddress, size_t searchSize, const std::string &pattern) {
+bool ReadStringSafe(uintptr_t address, std::string &outStr, size_t maxLen = 256) {
+    outStr.clear();
+    if (!address) return false;
+
+    mach_port_t task = mach_task_self();
+    char *buffer = new char[maxLen]();
+    mach_vm_size_t out_size = 0;
+
+    kern_return_t kr = mach_vm_read_overwrite(task, address, maxLen, (mach_vm_address_t) buffer, &out_size);
+    if (kr == KERN_SUCCESS) {
+        buffer[maxLen - 1] = '\0';
+        outStr = buffer;
+        delete[] buffer;
+        return true;
+    }
+    delete[] buffer;
+    return false;
+}
+
+uintptr_t FindPattern(uintptr_t startAddress, size_t searchSize, const std::string &pattern,
+                      const std::vector<std::string> &targetStrings) {
     std::vector<int> patternBytes = ParsePattern(pattern);
     size_t patternLen = patternBytes.size();
     if (patternLen == 0 || searchSize < patternLen) return 0;
 
-    auto *scanBytes = reinterpret_cast<uint8_t *>(startAddress);
+    std::vector<size_t> stringOffsetIndices;
+    for (size_t i = 0; i < patternLen;) {
+        if (patternBytes[i] == -2) {
+            stringOffsetIndices.push_back(i);
+            while (i < patternLen && patternBytes[i] == -2) {
+                i++;
+            }
+        } else {
+            i++;
+        }
+    }
 
-    uintptr_t foundAddress = 0;
-    int matchCount = 0;
+    if (stringOffsetIndices.size() != targetStrings.size()) {
+        std::cerr << "[FindPattern] Error: Placeholder group count (" << stringOffsetIndices.size()
+                  << ") does not match the number of target strings (" << targetStrings.size() << ") 不匹配！"
+                  << std::endl;
+        return 0;
+    }
+
+    auto *scanBytes = reinterpret_cast<uint8_t *>(startAddress);
 
     for (size_t i = 0; i <= searchSize - patternLen; ++i) {
         bool found = true;
         for (size_t j = 0; j < patternLen; ++j) {
-            if (patternBytes[j] != -1 && scanBytes[i + j] != patternBytes[j]) {
+            if (patternBytes[j] == -1 || patternBytes[j] == -2) continue;
+            if (scanBytes[i + j] != patternBytes[j]) {
                 found = false;
                 break;
             }
         }
+
         if (found) {
-            foundAddress = startAddress + i;
-            //matchCount++;
-            return foundAddress;
+            bool allStringsMatch = true;
+
+            for (size_t k = 0; k < stringOffsetIndices.size(); ++k) {
+                size_t offsetIndex = stringOffsetIndices[k];
+
+                // 提取 4 字节偏移
+                int32_t offset = 0;
+                std::memcpy(&offset, &scanBytes[i + offsetIndex], sizeof(int32_t));
+
+                // 计算当前占位符对应的 RIP 地址
+                uintptr_t ripAddress = startAddress + i + offsetIndex + 4;
+                uintptr_t stringAddress = ripAddress + offset;
+
+                // 安全读取并对比
+                std::string readStr;
+                if (ReadStringSafe(stringAddress, readStr, targetStrings[k].length() + 1)) {
+                    if (readStr != targetStrings[k]) {
+                        allStringsMatch = false;
+                        break;
+                    }
+                } else {
+                    allStringsMatch = false;
+                    break;
+                }
+            }
+
+            if (allStringsMatch) {
+                return startAddress + i;
+            }
         }
     }
-
-//    if (matchCount == 1) {
-//        return foundAddress;
-//    } else if (matchCount > 1) {
-//        std::cerr << "[FindPattern] Error: Pattern found " << matchCount
-//                  << " times. It is not unique!" << std::endl;
-//        return 0;
-//    }
-
     std::cerr << "[FindPattern] Error: Pattern not found." << std::endl;
     return 0;
 }
@@ -106,7 +164,24 @@ uintptr_t FindPattern(uintptr_t startAddress, size_t searchSize, const std::stri
 uintptr_t ScanMainModule(const std::string &pattern) {
     uintptr_t base = GetMainModuleBase();
     size_t size = GetMainModuleSize();
-    return FindPattern(base, size, pattern);
+    return FindPattern(base, size, pattern, {});
+}
+
+uintptr_t ScanMainModule(const std::string &pattern, const std::vector<std::string> &targetStrings) {
+    uintptr_t base = GetMainModuleBase();
+    size_t size = GetMainModuleSize();
+    return FindPattern(base, size, pattern, targetStrings);
+}
+
+uintptr_t
+ScanMainModule(const std::string &pattern, const std::vector<std::string> &targetStrings, const char *symbolName,
+               size_t maxSearchSize) {
+    void *symAddr = dlsym(RTLD_DEFAULT, symbolName);
+    if (!symAddr) {
+        std::cerr << "[ScanMainModule] Error: Symbol not found " << symbolName << std::endl;
+        return 0;
+    }
+    return FindPattern((uintptr_t) symAddr, maxSearchSize, pattern, targetStrings);
 }
 
 bool HookJMP(uintptr_t address, uintptr_t hookPtr) {

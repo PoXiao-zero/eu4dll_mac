@@ -14,9 +14,15 @@ bool WriteMemory(uintptr_t address, const uint8_t *data, size_t size);
 // ==========================================
 // 特征码搜索
 // ==========================================
-uintptr_t FindPattern(uintptr_t startAddress, size_t searchSize, const std::string &pattern);
 
 uintptr_t ScanMainModule(const std::string &pattern);
+
+uintptr_t ScanMainModule(const std::string &pattern, const std::vector<std::string> &targetStrings);
+
+uintptr_t
+ScanMainModule(const std::string &pattern, const std::vector<std::string> &targetStrings, const char *symbolName,
+               size_t maxSearchSize);
+
 
 // ==========================================
 // HOOK 和 替换调用
