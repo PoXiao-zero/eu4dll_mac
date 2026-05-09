@@ -112,8 +112,10 @@ namespace saveFileName {
  */
     void install_CConfirmSave_CConfirmSave() {
         TRACK_FUNCTION();
-        std::string pattern = "49 8B 7C 24 08 48 8B 07 48 8D 35 5C 8E AF 00";
-        uintptr_t matchAddress = ScanMainModule(pattern);
+        std::string pattern = "49 8B 7C 24 08 48 8B 07 48 8D 35 ? ? ? ? FF 90 C0 00 00 00 48 89 C3 48 8D 35 S S S S 48 8D 15";
+        uintptr_t matchAddress = ScanMainModule(pattern, {"CONFIRMSAVETEXT"},
+                                                "_ZN12CConfirmSaveC2EP9CEU3IdlerRK7CStringP21CloudFileCLOUDSTORAGEbbRKNSt3__16vectorIS2_NS7_9allocatorIS2_EEEE",
+                                                1024);
 
         if (matchAddress == 0) {
             printf("eu4dll_mac [Error] %s 特征码查找失败！\n", __func__);
@@ -258,9 +260,10 @@ namespace saveFileName {
  */
     void install_CConfirmLocalDeleteInGame_CConfirmLocalDeleteInGame() {
         TRACK_FUNCTION();
-        std::string pattern = "48 8B 7B 08 48 8B 07 48 8D 35 12 80 AF 00 FF 90 C0 00 00 00";
-        uintptr_t matchAddress = ScanMainModule(pattern);
-
+        std::string pattern = "48 8B 7B 08 48 8B 07 48 8D 35 ? ? ? ? FF 90 C0 00 00 00 48 89 C3 48 8D 35 S S S S 48 8D 15";
+        uintptr_t matchAddress = ScanMainModule(pattern, {"CONFIRMDELETETEXT"},
+                                                "_ZN25CConfirmLocalDeleteInGameC2EP9CEU3IdlerRK7CStringS4_RKNSt3__18functionIFvvEEE",
+                                                1024);
         if (matchAddress == 0) {
             printf("eu4dll_mac [Error] %s 特征码查找失败！\n", __func__);
             return;
