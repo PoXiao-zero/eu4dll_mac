@@ -30,3 +30,5 @@ add_library(eu4dll_mac SHARED library.cpp library.h
         src/localization.h)
 find_library(CORE_FOUNDATION_LIB CoreFoundation)
 target_link_libraries(eu4dll_mac PRIVATE ${CORE_FOUNDATION_LIB})
+
+add_subdirectory(tool)
