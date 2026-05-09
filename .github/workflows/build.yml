@@ -31,10 +31,11 @@ jobs:
           codesign --verify --verbose build/libeu4dll_mac.dylib
 
       - name: Prepare Package
-        # 创建打包临时文件夹，将签名后的动态库和 install.sh 复制进去
+        # 创建打包临时文件夹，将签名后的动态库和 insert_dylib、install.sh 复制进去
         run: |
           mkdir release_package
           cp build/libeu4dll_mac.dylib release_package/
+          cp build/tool/insert_dylib release_package/
           cp install.sh release_package/
 
       - name: Create ZIP Archive
@@ -47,7 +48,7 @@ jobs:
       - name: Publish GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: b${{ github.run_number }} # 自动创建如 v1, v2, v3 的 Tag
+          tag_name: b${{ github.run_number }} # 自动创建Tag
           name: Release build_${{ github.run_number }} # 发布标题
           body: New Build Version
           files: eu4dll_mac_build_${{ github.run_number }}.zip # 绑定的压缩包文件
