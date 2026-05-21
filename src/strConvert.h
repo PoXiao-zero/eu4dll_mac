@@ -6,9 +6,11 @@ namespace strConvert {
 
     void utf8ToEscapedStrReplace(std::string *str);
 
-    std::string* utf8ToEscapedStr(std::string *str);
+    std::string *utf8ToEscapedStr(std::string *str);
 
-    std::string escapedStrToUtf8(std::string *str);
+    std::string *escapedStrToUtf8(std::string *str);
+
+    void UTF8ToWindows1252(const char *utf8_in, char *out_buffer);
 }
 
 extern "C" {
