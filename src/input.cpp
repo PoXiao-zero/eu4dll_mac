@@ -31,7 +31,7 @@ namespace input {
         uint16_t Row;
     };
 
-    void inputUtf8ToEscapedStr(char *utf8_text,          // rdi: SDL text buffer [rbp-0x5C]
+    void inputUtf8ToEscapedStr(const char *utf8_text,          // rdi: SDL text buffer [rbp-0x5C]
                                void *pEventHandler,     // rsi: CPdxEventHandler 对象指针 [rbp-0x70]
                                void *pKeyBoard,         // rdx: CKeyBoard 对象指针 (r15)
                                uint32_t timestamp,       // rcx: 事件时间戳 [rbp-0x54]
@@ -53,7 +53,7 @@ namespace input {
 
             // 关键修复：先获取虚表基址，再取虚函数地址
             void **keyboardVtable = *reinterpret_cast<void ***>(pKeyBoard);
-            pfnPreCheck preCheck = reinterpret_cast<pfnPreCheck>(keyboardVtable[0x28 / 8]);
+            auto preCheck = reinterpret_cast<pfnPreCheck>(keyboardVtable[0x28 / 8]);
             preCheck(pKeyBoard, 0x303, timestamp, 0);
 
 
@@ -69,7 +69,7 @@ namespace input {
 
             // 关键修复：获取 EventHandler 对象的虚表
             void **handlerVtable = *reinterpret_cast<void ***>(pEventHandler);
-            pfnDispatch dispatch = reinterpret_cast<pfnDispatch>(handlerVtable[0x20 / 8]);
+            auto dispatch = reinterpret_cast<pfnDispatch>(handlerVtable[0x20 / 8]);
             dispatch(pEventHandler, pInputEventMem);
 
             // e. 析构 CInputEvent 释放内存
