@@ -279,6 +279,16 @@ namespace strConvert {
         return &tempText;
     }
 
+    std::string escapedStrToUtf8Val(std::string str) {
+        if (str.empty()) return str;
+        char *out = new char[str.length() * 2];
+        out[0] = '\0';
+        Windows1252ToUTF8(str.c_str(), out);
+        std::string result = out;
+        delete[] out;
+        return result;
+    }
+
     std::string *utf8ToEscapedStr(std::string *str) {
         if (str->empty()) return str;
         char *out = new char[str->length() * 2];

@@ -6,6 +6,8 @@ SCRIPT_DIR="$(pwd)"
 DYLIB_NAME="libeu4dll_mac.dylib"
 DYLIB_SOURCE="$SCRIPT_DIR/$DYLIB_NAME"
 INSERT_TOOL="$SCRIPT_DIR/insert_dylib"
+DICT_NAME="chinese_dict"
+DICT_SOURCE="$SCRIPT_DIR/$DICT_NAME"
 
 # ==========================================
 # 1. 获取系统语言并设置多语言文本
@@ -30,6 +32,8 @@ case "$SYS_LANG" in
         MSG_UNINSTALL_DONE="✅ 卸载完成！App 已恢复原状。"
         MSG_BACKUP="正在备份可执行文件..."
         MSG_COPYING="正在复制 $DYLIB_NAME 到 Frameworks 目录..."
+        MSG_COPY_DICT="正在复制中文拼音字典到 Resources 目录..."
+        MSG_WARN_NO_DICT="⚠️ 当前目录下找不到拼音字典目录 ($DICT_NAME)，缺失字典将导致拼音和首字母查找功能无法使用。"
         MSG_INJECTING="正在向二进制可执行文件注入补丁..."
         MSG_ERR_INJECT_FAIL="❌ 错误：二进制注入失败！详情如下："
         MSG_ERR_NO_BACKUP_DIRTY="❌ 致命错误：检测到游戏已被注入，但找不到原版备份文件！为防止损坏，请在 Steam 中验证游戏完整性后再试。"
@@ -38,6 +42,7 @@ case "$SYS_LANG" in
         MSG_SIGN="正在修复应用签名以防崩溃..."
         MSG_CACHE="正在刷新 LaunchServices 缓存..."
         MSG_SUCCESS="🎉 EU4 MAC双字节补丁安装完成！现在可以开始游戏啦！后续如需卸载补丁可再次运行本安装脚本。本补丁问题反馈地址：https://github.com/PoXiao-zero/eu4dll_mac"
+        DICT_BEHAVIOR="auto"
         ;;
     ja*)
         MSG_PROMPT="eu4.app をこのターミナルウィンドウにドラッグし、Enterキーを押して確認してください: "
@@ -64,6 +69,7 @@ case "$SYS_LANG" in
         MSG_SIGN="クラッシュ防止のため、アプリの署名を修復しています..."
         MSG_CACHE="LaunchServices キャッシュを更新しています..."
         MSG_SUCCESS="🎉 EU4 MAC 2バイトパッチのインストールが完了しました！これでゲームを開始できます！後でパッチをアンインストールする必要がある場合は、このインストールスクリプトを再度実行してください。本パッチのフィードバック先：https://github.com/PoXiao-zero/eu4dll_mac"
+        DICT_BEHAVIOR="skip"
         ;;
     ko*)
         MSG_PROMPT="eu4.app를 이 터미널 창으로 드래그하고 Enter를 눌러 확인하십시오: "
@@ -90,6 +96,7 @@ case "$SYS_LANG" in
         MSG_SIGN="충돌 방지를 위해 앱 서명을 복구하는 중..."
         MSG_CACHE="LaunchServices 캐시를 새로 고치는 중..."
         MSG_SUCCESS="🎉 EU4 MAC 더블 바이트 패치 설치가 완료되었습니다! 이제 게임을 시작할 수 있습니다! 나중에 패치를 제거해야 할 경우 이 설치 스크립트를 다시 실행하시면 됩니다. 패치 관련 피드백 주소: https://github.com/PoXiao-zero/eu4dll_mac"
+        DICT_BEHAVIOR="skip"
         ;;
     *)
         MSG_PROMPT="Please drag eu4.app into this terminal window and press Enter to confirm: "
@@ -108,6 +115,9 @@ case "$SYS_LANG" in
         MSG_UNINSTALL_DONE="✅ Uninstallation complete! The App has been restored to its original state."
         MSG_BACKUP="Backing up the executable..."
         MSG_COPYING="Copying $DYLIB_NAME to the Frameworks directory..."
+        MSG_ASK_DICT="❓ Do you want to install the Chinese Pinyin dictionary? (Enter y to confirm, other keys to skip): "
+        MSG_COPY_DICT="Copying Chinese Pinyin dictionary to Resources directory..."
+        MSG_WARN_NO_DICT="⚠️ Chinese Pinyin dictionary ($DICT_NAME) not found, skipping."
         MSG_INJECTING="Injecting patch into the binary executable..."
         MSG_ERR_INJECT_FAIL="❌ Error: Binary injection failed! Details:"
         MSG_ERR_NO_BACKUP_DIRTY="❌ Fatal Error: The game is already injected, but the original backup file is missing! To prevent damage, please verify game integrity in Steam and try again."
@@ -116,6 +126,7 @@ case "$SYS_LANG" in
         MSG_SIGN="Fixing app signature to prevent crashes..."
         MSG_CACHE="Refreshing LaunchServices cache..."
         MSG_SUCCESS="🎉 EU4 MAC Double-Byte Patch installation complete! You can now start the game! If you need to uninstall the patch later, you can run this installation script again. Feedback/Issues: https://github.com/PoXiao-zero/eu4dll_mac"
+        DICT_BEHAVIOR="ask"
         ;;
 esac
 
@@ -156,6 +167,7 @@ fi
 
 # 定义内部路径
 FRAMEWORKS_DIR="$APP_PATH/Contents/Frameworks"
+RESOURCES_DIR="$APP_PATH/Contents/Resources"
 PLIST_PATH="$APP_PATH/Contents/Info.plist"
 DYLIB_DEST="$FRAMEWORKS_DIR/$DYLIB_NAME"
 BACKUP_PATH="${EXEC_PATH}_bak"
@@ -217,6 +229,9 @@ if [ "$ACTION" == "uninstall" ]; then
     # 删除旧版本可能残留在 MacOS 的，以及现在在 Frameworks 的 dylib
     $SUDO_CMD rm -f "$APP_PATH/Contents/MacOS/$DYLIB_NAME"
     $SUDO_CMD rm -f "$DYLIB_DEST"
+
+    # 清理拼音字典
+    $SUDO_CMD rm -rf "$RESOURCES_DIR/$DICT_NAME"
 
     # 删除 Plist 中的旧注入配置（兼容老版本卸载逻辑）和全屏配置
     $SUDO_CMD /usr/libexec/PlistBuddy -c "Delete :LSEnvironment:DYLD_INSERT_LIBRARIES" "$PLIST_PATH" >/dev/null 2>&1
@@ -285,6 +300,30 @@ fi
 # 复制 dylib 到 Frameworks
 echo "$MSG_COPYING"
 $SUDO_CMD cp "$DYLIB_SOURCE" "$DYLIB_DEST"
+
+# 复制中文拼音字典逻辑
+if [ "$DICT_BEHAVIOR" != "skip" ]; then
+    if [ -e "$DICT_SOURCE" ]; then
+        DO_COPY_DICT=0
+        if [ "$DICT_BEHAVIOR" == "ask" ]; then
+            echo -e "\033[36m$MSG_ASK_DICT\033[0m\c"
+            read -r DICT_CHOICE
+            if [[ $(echo "$DICT_CHOICE" | tr '[:upper:]' '[:lower:]') == "y" ]]; then
+                DO_COPY_DICT=1
+            fi
+        else
+            DO_COPY_DICT=1 # 中文环境 auto 自动复制
+        fi
+
+        if [ "$DO_COPY_DICT" -eq 1 ]; then
+            echo "$MSG_COPY_DICT"
+            $SUDO_CMD cp -R "$DICT_SOURCE" "$RESOURCES_DIR/"
+        fi
+    else
+        # 找不到字典文件时予以提示但继续安装
+        echo -e "\033[33m$MSG_WARN_NO_DICT\033[0m"
+    fi
+fi
 
 if ! grep -qF "LSUIPresentationMode" "$PLIST_PATH"; then
   # 询问是否修复全屏遮挡

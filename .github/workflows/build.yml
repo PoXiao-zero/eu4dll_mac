@@ -27,8 +27,7 @@ jobs:
         # --force 表示覆盖已有的签名(如果有的话)，--sign - 代表使用 adhoc(身份为短横线) 进行签名
         run: |
           codesign --force --sign - build/libeu4dll_mac.dylib
-          # 验证签名是否成功 (可选步骤，用于在 actions 日志中确认)
-          codesign --verify --verbose build/libeu4dll_mac.dylib
+          codesign --force --sign - build/tool/insert_dylib
 
       - name: Prepare Package
         # 创建打包临时文件夹，将签名后的动态库和 insert_dylib、install.sh 复制进去
@@ -37,6 +36,7 @@ jobs:
           cp build/libeu4dll_mac.dylib release_package/
           cp build/tool/insert_dylib release_package/
           cp install.sh release_package/
+          cp -R build/chinese_dict release_package/
 
       - name: Create ZIP Archive
         # 压缩文件，名字带上自动递增的版本号 github.run_number
