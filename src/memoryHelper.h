@@ -11,6 +11,10 @@ bool ReadMemory(uintptr_t address, uint8_t *buffer, size_t size);
 
 bool WriteMemory(uintptr_t address, const uint8_t *data, size_t size);
 
+template <size_t N>
+bool WriteMemory(uintptr_t address, const uint8_t (&data)[N]) {
+    return WriteMemory(address, data, N);
+}
 // ==========================================
 // 特征码搜索
 // ==========================================
