@@ -15,17 +15,32 @@ Special thanks to the contributions of the original project; without it, this pr
 * This project is developed based on the `GOG version of EU4 1.37.5`. Theoretically, it supports other 1.37 versions, but versions below 1.37 will not be supported.
 * The feature from the original project that uses the `¿` character to reverse names has not been implemented.
 
-## 运行截图（Screenshots）
+## 运行截图 Screenshots
 
-![游戏内效果展示](./screenshot.png)
+![游戏内效果展示](img/screenshot.png)
 
-## 安装教程（Installation Guide）
+## 特色功能 Key Features
+* 支持加载纯UTF8 BOM编码的本地化文件(.yml)，无需预先转码。
 
-在 [Releases](https://github.com/PoXiao-zero/eu4dll_mac/releases) 页面下载最新的压缩包，解压后您会看到 `libeu4dll_mac.dylib` (核心动态库)、`insert_dylib`（注入工具）、 `install.sh` (自动安装脚本)。
+  Supports loading localization files (.yml) in UTF-8 BOM encoding directly, eliminating the need for pre-conversion.
+* 启用汉化MOD时，游戏内的查找功能将支持拼音和首字母搜索。（由 [cpp-pinyin](https://github.com/wolfgitpr/cpp-pinyin) 库提供支持）
 
-Download the latest archive from the [Releases](https://github.com/PoXiao-zero/eu4dll_mac/releases) page. After extracting it, you will see `libeu4dll_mac.dylib` (core dynamic library), `insert_dylib` (injection tool) and `install.sh` (auto installation script).
+  When the chinese localization MOD is enabled, the in-game find function supports Pinyin and initials (powered by the [cpp-pinyin](https://github.com/wolfgitpr/cpp-pinyin) library).
+* 将东亚文化组的人名修改为姓在名前。
 
-### 安装（Installation）
+  Adjusts the name display for East Asian culture groups to follow the "Surname First" format.
+
+![拼音查找演示](img/pinyin.gif)
+
+![东亚人名](img/east_asian_names.png)
+
+## 安装教程 Installation Guide
+
+在 [Releases](https://github.com/PoXiao-zero/eu4dll_mac/releases) 页面下载最新的压缩包，解压后您会看到 `libeu4dll_mac.dylib` (核心动态库)、[insert_dylib](https://github.com/tyilo/insert_dylib)（注入工具）、 `install.sh` (自动安装脚本)。
+
+Download the latest archive from the [Releases](https://github.com/PoXiao-zero/eu4dll_mac/releases) page. After extracting it, you will see `libeu4dll_mac.dylib` (core dynamic library), [insert_dylib](https://github.com/tyilo/insert_dylib) (injection tool) and `install.sh` (auto installation script).
+
+### 安装 Installation
 
 1. 打开 Mac 自带的 **终端** 应用程序。
 
