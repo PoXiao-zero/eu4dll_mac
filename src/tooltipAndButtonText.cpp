@@ -17,36 +17,36 @@ namespace tooltipAndButtonText {
         __asm__ volatile (
                 ".intel_syntax noprefix \n"
 
-                "mov rbx,rax \n"
+                "mov rbx, rax \n"
+                "movzx eax, byte ptr [rax] \n"
 
-                "cmp byte ptr [rax], %c[e1] \n"
+                "cmp al, %c[e1] \n"
                 "jz 1f \n"
-                "cmp byte ptr [rax], %c[e2] \n"
+                "cmp al, %c[e2] \n"
                 "jz 2f \n"
-                "cmp byte ptr [rax], %c[e3] \n"
+                "cmp al, %c[e3] \n"
                 "jz 3f \n"
-                "cmp byte ptr [rax], %c[e4] \n"
+                "cmp al, %c[e4] \n"
                 "jz 4f \n"
 
-                "movzx eax, byte ptr [rax] \n"
                 "jmp 7f \n"
 
                 "1: \n"
-                "movzx eax, word ptr [rax+1] \n"
+                "movzx eax, word ptr [rbx+1] \n"
                 "jmp 5f \n"
 
                 "2: \n"
-                "movzx eax, word ptr [rax+1] \n"
+                "movzx eax, word ptr [rbx+1] \n"
                 "sub eax, %c[s2] \n"
                 "jmp 5f \n"
 
                 "3: \n"
-                "movzx eax, word ptr [rax+1] \n"
+                "movzx eax, word ptr [rbx+1] \n"
                 "add eax, %c[s3] \n"
                 "jmp 5f \n"
 
                 "4: \n"
-                "movzx eax, word ptr [rax+1] \n"
+                "movzx eax, word ptr [rbx+1] \n"
                 "add eax, %c[s4] \n"
 
                 "5: \n"
@@ -64,12 +64,12 @@ namespace tooltipAndButtonText {
                 "add r12d, 2 \n" // 增加循环总计数
 
 
-                "cmp eax, 256\n"
+                "cmp eax, 256 \n"
                 "jb 7f \n"
-                "add eax, 1712\n"
+                "add eax, 1712 \n"
                 "7: \n"
-                "mov dword ptr [rip + _g_RenderToTexture_1_CurrentChar], eax\n"
-                "mov rbx, qword ptr [r15+rax*8+0xE8]\n"
+                "mov dword ptr [rip + _g_RenderToTexture_1_CurrentChar], eax \n"
+                "mov rbx, qword ptr [r15+rax*8+0xE8] \n"
 
                 "jmp qword ptr [rip + _g_RenderToTexture_1_BypassAddr] \n"
 
@@ -166,46 +166,48 @@ namespace tooltipAndButtonText {
         __asm__ volatile (
                 ".intel_syntax noprefix \n"
 
-                "cmp byte ptr [rax], %c[e1] \n"
+                "mov r10, rax \n"
+                "movzx eax, byte ptr [rax] \n"
+
+                "cmp al, %c[e1] \n"
                 "jz 1f \n"
-                "cmp byte ptr [rax], %c[e2] \n"
+                "cmp al, %c[e2] \n"
                 "jz 2f \n"
-                "cmp byte ptr [rax], %c[e3] \n"
+                "cmp al, %c[e3] \n"
                 "jz 3f \n"
-                "cmp byte ptr [rax], %c[e4] \n"
+                "cmp al, %c[e4] \n"
                 "jz 4f \n"
 
-                "movzx eax, byte ptr [rax] \n"
                 "jmp 7f \n"
 
                 "1: \n"
-                "movzx eax, word ptr [rax+1] \n"
+                "movzx eax, word ptr [r10+1] \n"
                 "jmp 5f \n"
 
                 "2: \n"
-                "movzx eax, word ptr [rax+1] \n"
+                "movzx eax, word ptr [r10+1] \n"
                 "sub eax, %c[s2] \n"
                 "jmp 5f \n"
 
                 "3: \n"
-                "movzx eax, word ptr [rax+1] \n"
+                "movzx eax, word ptr [r10+1] \n"
                 "add eax, %c[s3] \n"
                 "jmp 5f \n"
 
                 "4: \n"
-                "movzx eax, word ptr [rax+1] \n"
+                "movzx eax, word ptr [r10+1] \n"
                 "add eax, %c[s4] \n"
 
                 "5: \n"
 
                 "add r12d, 2 \n" // 增加循环总计数
 
-                "cmp eax, 256\n"
+                "cmp eax, 256 \n"
                 "jb 7f \n"
-                "add eax, 1712\n"
+                "add eax, 1712 \n"
 
                 "7: \n"
-                "mov r10, qword ptr [r14+rax*8+0xE8]\n"
+                "mov r10, qword ptr [r14+rax*8+0xE8] \n"
                 "jmp qword ptr [rip + _g_RenderToTexture_3_BypassAddr] \n"
 
                 ".att_syntax prefix \n"

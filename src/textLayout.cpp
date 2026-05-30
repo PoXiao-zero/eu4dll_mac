@@ -26,34 +26,36 @@ namespace textLayout {
         __asm__ volatile (
                 ".intel_syntax noprefix \n"
 
-                "cmp byte ptr [rax], %c[e1] \n"
+                "mov rdi, rax \n"
+                "movzx eax, byte ptr [rax] \n"
+
+                "cmp al, %c[e1] \n"
                 "jz 1f \n"
-                "cmp byte ptr [rax], %c[e2] \n"
+                "cmp al, %c[e2] \n"
                 "jz 2f \n"
-                "cmp byte ptr [rax], %c[e3] \n"
+                "cmp al, %c[e3] \n"
                 "jz 3f \n"
-                "cmp byte ptr [rax], %c[e4] \n"
+                "cmp al, %c[e4] \n"
                 "jz 4f \n"
 
-                "movzx eax, byte ptr [rax] \n"
                 "jmp 7f \n"
 
                 "1: \n"
-                "movzx eax, word ptr [rax+1] \n"
+                "movzx eax, word ptr [rdi+1] \n"
                 "jmp 5f \n"
 
                 "2: \n"
-                "movzx eax, word ptr [rax+1] \n"
+                "movzx eax, word ptr [rdi+1] \n"
                 "sub eax, %c[s2] \n"
                 "jmp 5f \n"
 
                 "3: \n"
-                "movzx eax, word ptr [rax+1] \n"
+                "movzx eax, word ptr [rdi+1] \n"
                 "add eax, %c[s3] \n"
                 "jmp 5f \n"
 
                 "4: \n"
-                "movzx eax, word ptr [rax+1] \n"
+                "movzx eax, word ptr [rdi+1] \n"
                 "add eax, %c[s4] \n"
 
                 // 通用收尾
@@ -61,12 +63,12 @@ namespace textLayout {
 
                 "add r13d, 2 \n" // 增加循环总计数
 
-                "cmp eax, 256\n"
+                "cmp eax, 256 \n"
                 "jb 7f \n"
-                "add eax, 1712\n"
+                "add eax, 1712 \n"
 
                 "7: \n"
-                "mov rax, qword ptr [rbx+rax*8+0xE8]\n"
+                "mov rax, qword ptr [rbx+rax*8+0xE8] \n"
                 "jmp qword ptr [rip + _g_GetHeightOfString_BypassAddr] \n"
 
                 ".att_syntax prefix \n"
@@ -108,46 +110,48 @@ namespace textLayout {
         __asm__ volatile (
                 ".intel_syntax noprefix \n"
 
+                "lea rbx, [r14+r12] \n"
+
                 // 检查自定义转义字符
-                "cmp byte ptr [r14+r12], %c[e1] \n"
+                "cmp sil, %c[e1] \n"
                 "jz 1f \n"
-                "cmp byte ptr [r14+r12], %c[e2] \n"
+                "cmp sil, %c[e2] \n"
                 "jz 2f \n"
-                "cmp byte ptr [r14+r12], %c[e3] \n"
+                "cmp sil, %c[e3] \n"
                 "jz 3f \n"
-                "cmp byte ptr [r14+r12], %c[e4] \n"
+                "cmp sil, %c[e4] \n"
                 "jz 4f \n"
 
                 "jmp 7f \n"
 
                 "1: \n"
-                "movzx esi, word ptr [r14+r12+1] \n"
+                "movzx esi, word ptr [rbx+1] \n"
                 "jmp 5f \n"
 
                 "2: \n"
-                "movzx esi, word ptr [r14+r12+1] \n"
+                "movzx esi, word ptr [rbx+1] \n"
                 "sub esi, %c[s2] \n"
                 "jmp 5f \n"
 
                 "3: \n"
-                "movzx esi, word ptr [r14+r12+1] \n"
+                "movzx esi, word ptr [rbx+1] \n"
                 "add esi, %c[s3] \n"
                 "jmp 5f \n"
 
                 "4: \n"
-                "movzx esi, word ptr [r14+r12+1] \n"
+                "movzx esi, word ptr [rbx+1] \n"
                 "add esi, %c[s4] \n"
 
                 // 通用收尾
                 "5: \n"
                 "add r15d, 2 \n" // 增加循环总计数
 
-                "cmp r15d, edx\n" //下标越界检测，越界就直接退出循环。比如检查的字符串末尾恰好就是**标识符0x10-0x13**时会错误的越界读取后面两个字节当成文字，导致换行符0x0A出现在错误的位置(标识符后面)。
-                "jge 8f\n"
+                "cmp r15d, edx \n" //下标越界检测，越界就直接退出循环。比如检查的字符串末尾恰好就是**标识符0x10-0x13**时会错误的越界读取后面两个字节当成文字，导致换行符0x0A出现在错误的位置(标识符后面)。
+                "jge 8f \n"
 
-                "cmp esi, 256\n"
+                "cmp esi, 256 \n"
                 "jb 7f \n"
-                "add esi, 1712\n"
+                "add esi, 1712 \n"
 
                 "7: \n"
                 "mov rbx, [rdi+rsi*8+0xE8] \n"
@@ -195,45 +199,47 @@ namespace textLayout {
         __asm__ volatile (
                 ".intel_syntax noprefix \n"
 
-                "cmp byte ptr [rax], %c[e1] \n"
+                "mov rbx, rax \n"
+                "movzx eax, byte ptr [rax] \n"
+
+                "cmp al, %c[e1] \n"
                 "jz 1f \n"
-                "cmp byte ptr [rax], %c[e2] \n"
+                "cmp al, %c[e2] \n"
                 "jz 2f \n"
-                "cmp byte ptr [rax], %c[e3] \n"
+                "cmp al, %c[e3] \n"
                 "jz 3f \n"
-                "cmp byte ptr [rax], %c[e4] \n"
+                "cmp al, %c[e4] \n"
                 "jz 4f \n"
 
-                "movzx eax, byte ptr [rax] \n"
                 "jmp 7f \n"
 
                 "1: \n"
-                "movzx eax, word ptr [rax+1] \n"
+                "movzx eax, word ptr [rbx+1] \n"
                 "jmp 5f \n"
 
                 "2: \n"
-                "movzx eax, word ptr [rax+1] \n"
+                "movzx eax, word ptr [rbx+1] \n"
                 "sub eax, %c[s2] \n"
                 "jmp 5f \n"
 
                 "3: \n"
-                "movzx eax, word ptr [rax+1] \n"
+                "movzx eax, word ptr [rbx+1] \n"
                 "add eax, %c[s3] \n"
                 "jmp 5f \n"
 
                 "4: \n"
-                "movzx eax, word ptr [rax+1] \n"
+                "movzx eax, word ptr [rbx+1] \n"
                 "add eax, %c[s4] \n"
 
                 "5: \n"
 
                 "add dword ptr [rbp - 0xB4], 2 \n" // 增加循环总计数
 
-                "cmp eax, 256\n"
+                "cmp eax, 256 \n"
                 "jb 7f \n"
-                "add eax, 1712\n"
+                "add eax, 1712 \n"
                 "7: \n"
-                "mov rbx, qword ptr [r12+rax*8+0xE8]\n"
+                "mov rbx, qword ptr [r12+rax*8+0xE8] \n"
                 "jmp qword ptr [rip + _g_GetRequiredSize_BypassAddr] \n"
 
                 ".att_syntax prefix \n"
@@ -274,45 +280,47 @@ namespace textLayout {
         __asm__ volatile (
                 ".intel_syntax noprefix \n"
 
-                "cmp byte ptr [rax], %c[e1] \n"
+                "mov rbx, rax \n"
+                "movzx eax, byte ptr [rax] \n"
+
+                "cmp al, %c[e1] \n"
                 "jz 1f \n"
-                "cmp byte ptr [rax], %c[e2] \n"
+                "cmp al, %c[e2] \n"
                 "jz 2f \n"
-                "cmp byte ptr [rax], %c[e3] \n"
+                "cmp al, %c[e3] \n"
                 "jz 3f \n"
-                "cmp byte ptr [rax], %c[e4] \n"
+                "cmp al, %c[e4] \n"
                 "jz 4f \n"
 
-                "movzx eax, byte ptr [rax] \n"
                 "jmp 7f \n"
 
                 "1: \n"
-                "movzx eax, word ptr [rax+1] \n"
+                "movzx eax, word ptr [rbx+1] \n"
                 "jmp 5f \n"
 
                 "2: \n"
-                "movzx eax, word ptr [rax+1] \n"
+                "movzx eax, word ptr [rbx+1] \n"
                 "sub eax, %c[s2] \n"
                 "jmp 5f \n"
 
                 "3: \n"
-                "movzx eax, word ptr [rax+1] \n"
+                "movzx eax, word ptr [rbx+1] \n"
                 "add eax, %c[s3] \n"
                 "jmp 5f \n"
 
                 "4: \n"
-                "movzx eax, word ptr [rax+1] \n"
+                "movzx eax, word ptr [rbx+1] \n"
                 "add eax, %c[s4] \n"
 
                 "5: \n"
 
                 "add dword ptr [rbp - 0xB4], 2 \n" // 增加循环总计数
 
-                "cmp eax, 256\n"
+                "cmp eax, 256 \n"
                 "jb 7f \n"
-                "add eax, 1712\n"
+                "add eax, 1712 \n"
                 "7: \n"
-                "mov rbx, qword ptr [r13+rax*8+0xE8]\n"
+                "mov rbx, qword ptr [r13+rax*8+0xE8] \n"
                 "jmp qword ptr [rip + _g_GetActualRealRequiredSizeActually_1_BypassAddr] \n"
 
                 ".att_syntax prefix \n"
@@ -353,46 +361,48 @@ namespace textLayout {
         __asm__ volatile (
                 ".intel_syntax noprefix \n"
 
-                "cmp byte ptr [rax], %c[e1] \n"
+                "mov rcx, rax \n"
+                "movzx eax, byte ptr [rax] \n"
+
+                "cmp al, %c[e1] \n"
                 "jz 1f \n"
-                "cmp byte ptr [rax], %c[e2] \n"
+                "cmp al, %c[e2] \n"
                 "jz 2f \n"
-                "cmp byte ptr [rax], %c[e3] \n"
+                "cmp al, %c[e3] \n"
                 "jz 3f \n"
-                "cmp byte ptr [rax], %c[e4] \n"
+                "cmp al, %c[e4] \n"
                 "jz 4f \n"
 
-                "movzx eax, byte ptr [rax] \n"
                 "jmp 7f \n"
 
                 "1: \n"
-                "movzx eax, word ptr [rax+1] \n"
+                "movzx eax, word ptr [rcx+1] \n"
                 "jmp 5f \n"
 
                 "2: \n"
-                "movzx eax, word ptr [rax+1] \n"
+                "movzx eax, word ptr [rcx+1] \n"
                 "sub eax, %c[s2] \n"
                 "jmp 5f \n"
 
                 "3: \n"
-                "movzx eax, word ptr [rax+1] \n"
+                "movzx eax, word ptr [rcx+1] \n"
                 "add eax, %c[s3] \n"
                 "jmp 5f \n"
 
                 "4: \n"
-                "movzx eax, word ptr [rax+1] \n"
+                "movzx eax, word ptr [rcx+1] \n"
                 "add eax, %c[s4] \n"
 
                 "5: \n"
 
                 "add r13d, 2 \n" // 增加循环总计数
 
-                "cmp eax, 256\n"
+                "cmp eax, 256 \n"
                 "jb 7f \n"
-                "add eax, 1712\n"
+                "add eax, 1712 \n"
 
                 "7: \n"
-                "mov rcx, [rbp - 0x1128]\n"
+                "mov rcx, [rbp - 0x1128] \n"
                 "jmp qword ptr [rip + _g_GetActualRequiredSize_BypassAddr] \n"
 
                 ".att_syntax prefix \n"

@@ -19,17 +19,18 @@ namespace mainText {
         __asm__ volatile (
                 ".intel_syntax noprefix \n"
 
-                "cmp byte ptr [rdi+r11], %c[e1] \n"
+                "movzx edx, byte ptr [rdi+r11] \n"
+
+                "cmp dl, %c[e1] \n"
                 "jz 1f \n"
-                "cmp byte ptr [rdi+r11], %c[e2] \n"
+                "cmp dl, %c[e2] \n"
                 "jz 2f \n"
-                "cmp byte ptr [rdi+r11], %c[e3] \n"
+                "cmp dl, %c[e3] \n"
                 "jz 3f \n"
-                "cmp byte ptr [rdi+r11], %c[e4] \n"
+                "cmp dl, %c[e4] \n"
                 "jz 4f \n"
 
                 "mov dword ptr [rip + _g_RenderToScreen_1_CurrentChar], 1\n"
-                "movzx edx, byte ptr [rdi+r11] \n" // 执行被覆盖的源指令
                 "jmp qword ptr [rip + _g_RenderToScreen_1_RetAddr] \n"
 
                 "1: \n"
@@ -51,7 +52,7 @@ namespace mainText {
                 "add edx, %c[s4] \n"
 
                 "5: \n"
-                "mov dword ptr [rip + _g_RenderToScreen_1_CurrentChar], edx\n"
+                "mov dword ptr [rip + _g_RenderToScreen_1_CurrentChar], edx \n"
 
                 "mov ax, [rdi+r11+1] \n" // 读取标识符后2个字节
                 "mov [rsi+rcx+1], ax \n" // 写入缓存区 [rbx+1]
@@ -64,9 +65,9 @@ namespace mainText {
                 "add r13d, 2 \n" // 源字符串读取索引 + 2
                 "add r12d, 2 \n" // 缓存区索引 + 2
 
-                "cmp edx, 256\n"
+                "cmp edx, 256 \n"
                 "jb 7f \n"
-                "add edx, 1712\n"
+                "add edx, 1712 \n"
                 "7: \n"
                 "jmp qword ptr [rip + _g_RenderToScreen_1_BypassAddr] \n"
 
@@ -164,34 +165,36 @@ namespace mainText {
         __asm__ volatile (
                 ".intel_syntax noprefix \n"
 
-                "cmp byte ptr [r12+rax], %c[e1] \n"
+                "lea rbx, [r12+rax] \n"
+                "movzx eax, byte ptr [rbx] \n"
+
+                "cmp al, %c[e1] \n"
                 "jz 1f \n"
-                "cmp byte ptr [r12+rax], %c[e2] \n"
+                "cmp al, %c[e2] \n"
                 "jz 2f \n"
-                "cmp byte ptr [r12+rax], %c[e3] \n"
+                "cmp al, %c[e3] \n"
                 "jz 3f \n"
-                "cmp byte ptr [r12+rax], %c[e4] \n"
+                "cmp al, %c[e4] \n"
                 "jz 4f \n"
 
-                "movzx eax, byte ptr [r12+rax] \n"
                 "jmp qword ptr [rip + _g_RenderToScreen_3_RetAddr] \n"
 
                 "1: \n"
-                "movzx eax, word ptr [r12+rax+1] \n"
+                "movzx eax, word ptr [rbx+1] \n"
                 "jmp 5f \n"
 
                 "2: \n"
-                "movzx eax, word ptr [r12+rax+1] \n"
+                "movzx eax, word ptr [rbx+1] \n"
                 "sub eax, %c[s2] \n"
                 "jmp 5f \n"
 
                 "3: \n"
-                "movzx eax, word ptr [r12+rax+1] \n"
+                "movzx eax, word ptr [rbx+1] \n"
                 "add eax, %c[s3] \n"
                 "jmp 5f \n"
 
                 "4: \n"
-                "movzx eax, word ptr [r12+rax+1] \n"
+                "movzx eax, word ptr [rbx+1] \n"
                 "add eax, %c[s4] \n"
 
                 // 通用收尾
@@ -199,9 +202,9 @@ namespace mainText {
                 "add r15d, 2 \n"         // 增加循环总计数
                 "add r12, 2 \n"         // 同步增加当前迭代的索引
 
-                "cmp eax, 256\n"
+                "cmp eax, 256 \n"
                 "jb 7f \n"
-                "add eax, 1712\n"
+                "add eax, 1712 \n"
                 "7: \n"
                 "jmp qword ptr [rip + _g_RenderToScreen_3_BypassAddr] \n"
 

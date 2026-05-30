@@ -13,34 +13,36 @@ namespace text3D {
         __asm__ volatile (
                 ".intel_syntax noprefix \n"
 
-                "cmp byte ptr [rax], %c[e1] \n"
+                "mov rdi, rax \n"
+                "movzx eax, byte ptr [rax] \n"
+
+                "cmp al, %c[e1] \n"
                 "jz 1f \n"
-                "cmp byte ptr [rax], %c[e2] \n"
+                "cmp al, %c[e2] \n"
                 "jz 2f \n"
-                "cmp byte ptr [rax], %c[e3] \n"
+                "cmp al, %c[e3] \n"
                 "jz 3f \n"
-                "cmp byte ptr [rax], %c[e4] \n"
+                "cmp al, %c[e4] \n"
                 "jz 4f \n"
 
-                "movzx eax, byte ptr [rax] \n"
                 "jmp 7f \n"
 
                 "1: \n"
-                "movzx eax, word ptr [rax+1] \n"
+                "movzx eax, word ptr [rdi+1] \n"
                 "jmp 5f \n"
 
                 "2: \n"
-                "movzx eax, word ptr [rax+1] \n"
+                "movzx eax, word ptr [rdi+1] \n"
                 "sub eax, %c[s2] \n"
                 "jmp 5f \n"
 
                 "3: \n"
-                "movzx eax, word ptr [rax+1] \n"
+                "movzx eax, word ptr [rdi+1] \n"
                 "add eax, %c[s3] \n"
                 "jmp 5f \n"
 
                 "4: \n"
-                "movzx eax, word ptr [rax+1] \n"
+                "movzx eax, word ptr [rdi+1] \n"
                 "add eax, %c[s4] \n"
 
                 // 通用收尾
@@ -48,9 +50,9 @@ namespace text3D {
 
                 "add r12d, 2 \n" // 增加循环总计数
 
-                "cmp eax, 256\n"
+                "cmp eax, 256 \n"
                 "jb 7f \n"
-                "add eax, 1712\n"
+                "add eax, 1712 \n"
                 "7: \n"
                 "mov rax, [r15+rax*8+0xE8] \n"
                 "jmp qword ptr [rip + _g_Render3d_1_BypassAddr] \n"
@@ -96,35 +98,35 @@ namespace text3D {
                 ".intel_syntax noprefix \n"
 
                 "mov rbx, rax \n" // 保存当前指针，用于后面追加字符写入缓冲区
+                "movzx eax, byte ptr [rax] \n"
 
-                "cmp byte ptr [rax], %c[e1] \n"
+                "cmp al, %c[e1] \n"
                 "jz 1f \n"
-                "cmp byte ptr [rax], %c[e2] \n"
+                "cmp al, %c[e2] \n"
                 "jz 2f \n"
-                "cmp byte ptr [rax], %c[e3] \n"
+                "cmp al, %c[e3] \n"
                 "jz 3f \n"
-                "cmp byte ptr [rax], %c[e4] \n"
+                "cmp al, %c[e4] \n"
                 "jz 4f \n"
 
-                "movzx eax, byte ptr [rax] \n"
                 "jmp 7f \n"
 
                 "1: \n"
-                "movzx eax, word ptr [rax+1] \n"
+                "movzx eax, word ptr [rbx+1] \n"
                 "jmp 5f \n"
 
                 "2: \n"
-                "movzx eax, word ptr [rax+1] \n"
+                "movzx eax, word ptr [rbx+1] \n"
                 "sub eax, %c[s2] \n"
                 "jmp 5f \n"
 
                 "3: \n"
-                "movzx eax, word ptr [rax+1] \n"
+                "movzx eax, word ptr [rbx+1] \n"
                 "add eax, %c[s3] \n"
                 "jmp 5f \n"
 
                 "4: \n"
-                "movzx eax, word ptr [rax+1] \n"
+                "movzx eax, word ptr [rbx+1] \n"
                 "add eax, %c[s4] \n"
 
                 // 通用收尾
@@ -142,9 +144,9 @@ namespace text3D {
                 "call qword ptr [rip + _g_CString_AppendCharAddress] \n"
                 "pop rax \n"
 
-                "cmp eax, 256\n"
+                "cmp eax, 256 \n"
                 "jb 7f \n"
-                "add eax, 1712\n"
+                "add eax, 1712 \n"
                 "7: \n"
                 "mov rcx, [rbp - 0xF0] \n"
                 "jmp qword ptr [rip + _g_Render3d_2_BypassAddr] \n"

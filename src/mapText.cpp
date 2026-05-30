@@ -201,34 +201,36 @@ namespace mapText {
         __asm__ volatile (
                 ".intel_syntax noprefix \n"
 
-                "cmp byte ptr [rax], %c[e1] \n"
+                "mov rdi, rax \n"
+                "movzx eax, byte ptr [rax] \n"
+
+                "cmp al, %c[e1] \n"
                 "jz 1f \n"
-                "cmp byte ptr [rax], %c[e2] \n"
+                "cmp al, %c[e2] \n"
                 "jz 2f \n"
-                "cmp byte ptr [rax], %c[e3] \n"
+                "cmp al, %c[e3] \n"
                 "jz 3f \n"
-                "cmp byte ptr [rax], %c[e4] \n"
+                "cmp al, %c[e4] \n"
                 "jz 4f \n"
 
-                "movzx   eax, byte ptr [rax] \n"
                 "jmp 7f \n"
 
                 "1: \n"
-                "movzx eax, word ptr [rax+1] \n"
+                "movzx eax, word ptr [rdi+1] \n"
                 "jmp 5f \n"
 
                 "2: \n"
-                "movzx eax, word ptr [rax+1] \n"
+                "movzx eax, word ptr [rdi+1] \n"
                 "sub eax, %c[s2] \n"
                 "jmp 5f \n"
 
                 "3: \n"
-                "movzx eax, word ptr [rax+1] \n"
+                "movzx eax, word ptr [rdi+1] \n"
                 "add eax, %c[s3] \n"
                 "jmp 5f \n"
 
                 "4: \n"
-                "movzx eax, word ptr [rax+1] \n"
+                "movzx eax, word ptr [rdi+1] \n"
                 "add eax, %c[s4] \n"
 
                 // 通用收尾
@@ -236,9 +238,9 @@ namespace mapText {
 
                 "add ebx, 2 \n" // 增加循环总计数
 
-                "cmp eax, 256\n"
+                "cmp eax, 256 \n"
                 "jb 7f \n"
-                "add eax, 1712\n"
+                "add eax, 1712 \n"
                 "7: \n"
 
                 "mov rax, [r14+rax*8+0xE8] \n"
@@ -284,34 +286,36 @@ namespace mapText {
         __asm__ volatile (
                 ".intel_syntax noprefix \n"
 
-                "cmp byte ptr [rax], %c[e1] \n"
+                "mov rdi, rax \n"
+                "movzx eax, byte ptr [rax] \n"
+
+                "cmp al, %c[e1] \n"
                 "jz 1f \n"
-                "cmp byte ptr [rax], %c[e2] \n"
+                "cmp al, %c[e2] \n"
                 "jz 2f \n"
-                "cmp byte ptr [rax], %c[e3] \n"
+                "cmp al, %c[e3] \n"
                 "jz 3f \n"
-                "cmp byte ptr [rax], %c[e4] \n"
+                "cmp al, %c[e4] \n"
                 "jz 4f \n"
 
-                "movzx   eax, byte ptr [rax] \n"
                 "jmp 7f \n"
 
                 "1: \n"
-                "movzx eax, word ptr [rax+1] \n"
+                "movzx eax, word ptr [rdi+1] \n"
                 "jmp 5f \n"
 
                 "2: \n"
-                "movzx eax, word ptr [rax+1] \n"
+                "movzx eax, word ptr [rdi+1] \n"
                 "sub eax, %c[s2] \n"
                 "jmp 5f \n"
 
                 "3: \n"
-                "movzx eax, word ptr [rax+1] \n"
+                "movzx eax, word ptr [rdi+1] \n"
                 "add eax, %c[s3] \n"
                 "jmp 5f \n"
 
                 "4: \n"
-                "movzx eax, word ptr [rax+1] \n"
+                "movzx eax, word ptr [rdi+1] \n"
                 "add eax, %c[s4] \n"
 
                 // 通用收尾
@@ -319,9 +323,9 @@ namespace mapText {
 
                 "add ebx, 2 \n" // 增加循环总计数
 
-                "cmp eax, 256\n"
+                "cmp eax, 256 \n"
                 "jb 7f \n"
-                "add eax, 1712\n"
+                "add eax, 1712 \n"
 
                 "7: \n"
 
@@ -365,36 +369,37 @@ namespace mapText {
     __attribute__((naked)) void naked_CBitmapFont_FillVertexBuffer_2() {
         __asm__ volatile (
                 ".intel_syntax noprefix \n"
-                "mov r13, rax \n"
 
-                "cmp byte ptr [rax], %c[e1] \n"
+                "mov r13, rax \n"
+                "movzx eax, byte ptr [rax] \n"
+
+                "cmp al, %c[e1] \n"
                 "jz 1f \n"
-                "cmp byte ptr [rax], %c[e2] \n"
+                "cmp al, %c[e2] \n"
                 "jz 2f \n"
-                "cmp byte ptr [rax], %c[e3] \n"
+                "cmp al, %c[e3] \n"
                 "jz 3f \n"
-                "cmp byte ptr [rax], %c[e4] \n"
+                "cmp al, %c[e4] \n"
                 "jz 4f \n"
 
-                "movzx eax, byte ptr [rax] \n"
                 "jmp 7f \n"
 
                 "1: \n"
-                "movzx eax, word ptr [rax+1] \n"
+                "movzx eax, word ptr [r13+1] \n"
                 "jmp 5f \n"
 
                 "2: \n"
-                "movzx eax, word ptr [rax+1] \n"
+                "movzx eax, word ptr [r13+1] \n"
                 "sub eax, %c[s2] \n"
                 "jmp 5f \n"
 
                 "3: \n"
-                "movzx eax, word ptr [rax+1] \n"
+                "movzx eax, word ptr [r13+1] \n"
                 "add eax, %c[s3] \n"
                 "jmp 5f \n"
 
                 "4: \n"
-                "movzx eax, word ptr [rax+1] \n"
+                "movzx eax, word ptr [r13+1] \n"
                 "add eax, %c[s4] \n"
 
                 // 通用收尾
@@ -414,9 +419,9 @@ namespace mapText {
 
                 "add r12d, 2 \n" // 增加循环总计数
 
-                "cmp eax, 256\n"
+                "cmp eax, 256 \n"
                 "jb 7f \n"
-                "add eax, 1712\n"
+                "add eax, 1712 \n"
                 "7: \n"
                 "mov r13, [r15+rax*8+0xE8] \n"
                 "jmp qword ptr [rip + _g_FillVertexBuffer_2_BypassAddr] \n"
@@ -464,45 +469,45 @@ namespace mapText {
                 "mov r15d, dword ptr [rip + _g_CurveText_1_SkipByteCount] \n"
                 "add rax, r15 \n"
 
-                "cmp byte ptr [rax], %c[e1] \n"
-                "jz 1f \n"
-                "cmp byte ptr [rax], %c[e2] \n"
-                "jz 2f \n"
-                "cmp byte ptr [rax], %c[e3] \n"
-                "jz 3f \n"
-                "cmp byte ptr [rax], %c[e4] \n"
-                "jz 4f \n"
-
-                // 普通字符分支，手动还原被覆盖的指令
+                "mov r15, rax \n"
                 "movzx eax, byte ptr [rax] \n"
+
+                "cmp al, %c[e1] \n"
+                "jz 1f \n"
+                "cmp al, %c[e2] \n"
+                "jz 2f \n"
+                "cmp al, %c[e3] \n"
+                "jz 3f \n"
+                "cmp al, %c[e4] \n"
+                "jz 4f \n"
 
                 "jmp 7f \n"
 
                 "1: \n"
-                "movzx eax, word ptr [rax+1] \n"
+                "movzx eax, word ptr [r15+1] \n"
                 "jmp 5f \n"
 
                 "2: \n"
-                "movzx eax, word ptr [rax+1] \n"
+                "movzx eax, word ptr [r15+1] \n"
                 "sub eax, %c[s2] \n"
                 "jmp 5f \n"
 
                 "3: \n"
-                "movzx eax, word ptr [rax+1] \n"
+                "movzx eax, word ptr [r15+1] \n"
                 "add eax, %c[s3] \n"
                 "jmp 5f \n"
 
                 "4: \n"
-                "movzx eax, word ptr [rax+1] \n"
+                "movzx eax, word ptr [r15+1] \n"
                 "add eax, %c[s4] \n"
 
                 // 通用收尾
                 "5: \n"
                 "add dword ptr [rip + _g_CurveText_1_SkipByteCount], 2 \n" //增加外部跳过字节计数
 
-                "cmp eax, 256\n"
+                "cmp eax, 256 \n"
                 "jb 7f \n"
-                "add eax, 1712\n"
+                "add eax, 1712 \n"
 
                 "7: \n"
 
@@ -660,43 +665,45 @@ namespace mapText {
         __asm__ volatile (
                 ".intel_syntax noprefix \n"
 
-                "cmp byte ptr [rax], %c[e1] \n"
+                "mov rdi, rax \n"
+                "movzx eax, byte ptr [rax] \n"
+
+                "cmp al, %c[e1] \n"
                 "jz 1f \n"
-                "cmp byte ptr [rax], %c[e2] \n"
+                "cmp al, %c[e2] \n"
                 "jz 2f \n"
-                "cmp byte ptr [rax], %c[e3] \n"
+                "cmp al, %c[e3] \n"
                 "jz 3f \n"
-                "cmp byte ptr [rax], %c[e4] \n"
+                "cmp al, %c[e4] \n"
                 "jz 4f \n"
 
-                "movzx eax, byte ptr [rax] \n"
                 "jmp 7f \n"
 
                 "1: \n"
-                "movzx eax, word ptr [rax+1] \n"
+                "movzx eax, word ptr [rdi+1] \n"
                 "jmp 5f \n"
 
                 "2: \n"
-                "movzx eax, word ptr [rax+1] \n"
+                "movzx eax, word ptr [rdi+1] \n"
                 "sub eax, %c[s2] \n"
                 "jmp 5f \n"
 
                 "3: \n"
-                "movzx eax, word ptr [rax+1] \n"
+                "movzx eax, word ptr [rdi+1] \n"
                 "add eax, %c[s3] \n"
                 "jmp 5f \n"
 
                 "4: \n"
-                "movzx eax, word ptr [rax+1] \n"
+                "movzx eax, word ptr [rdi+1] \n"
                 "add eax, %c[s4] \n"
 
                 "5: \n"
 
                 "add r13d, 2 \n" // 增加循环总计数
 
-                "cmp eax, 256\n"
+                "cmp eax, 256 \n"
                 "jb 7f \n"
-                "add eax, 1712\n"
+                "add eax, 1712 \n"
                 "7: \n"
 
                 "mov rax, [r14+rax*8+0xE8] \n"
