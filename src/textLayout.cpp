@@ -439,6 +439,29 @@ namespace textLayout {
         SET_SUCCESS();
     }
 
+/**
+ Hook函数：CBitmapFont::GetActualRequiredSize 自动换行
+ 作用：强制所有字符都使用“空格”的超出边界换行检测逻辑分支，以解决游戏弹窗多余空行问题
+ */
+    void install_CBitmapFont_GetActualRequiredSize_1() {
+        TRACK_FUNCTION();
+        std::string pattern = "41 0F BF 44 24 06 0F 57 C9 F3 0F 2A C8 F3 0F 59 D9 0F 2E 1D ? ? ? ? 75 37 7A 35";
+        uintptr_t matchAddress = ScanMainModule(pattern);
+
+        if (matchAddress == 0) {
+            printf("eu4dll_mac [Error] %s 特征码查找失败！\n", __func__);
+            return;
+        }
+        uintptr_t leaAddress = matchAddress;
+        WriteMemory(leaAddress,
+                    {0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90,
+                     0x90,
+                     0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90});
+        printf("eu4dll_mac [Success] %s WriteMemory 匹配地址:0x%lx 写入地址:0x%lx\n", __func__,
+               matchAddress, leaAddress);
+        SET_SUCCESS();
+    }
+
     __attribute__((naked)) void naked_CBitmapFont_GetActualRealRequiredSizeActually_2() {
         __asm__ volatile (
                 ".intel_syntax noprefix \n"
@@ -584,6 +607,7 @@ namespace textLayout {
         install_CBitmapFont_GetRequiredSize();
         install_CBitmapFont_GetActualRealRequiredSizeActually_1();
         install_CBitmapFont_GetActualRequiredSize();
+        install_CBitmapFont_GetActualRequiredSize_1();
         install_CBitmapFont_GetActualRealRequiredSizeActually_2();
         install_CBitmapFont_GetActualRealRequiredSizeActually_3();
         //install_CBitmapFont_GetActualRealRequiredSizeActually_4();// 阻止截断
