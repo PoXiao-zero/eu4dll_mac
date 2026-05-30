@@ -17,7 +17,7 @@ namespace tooltipAndButtonText {
         __asm__ volatile (
                 ".intel_syntax noprefix \n"
 
-                "mov r10,rax \n"
+                "mov rbx,rax \n"
 
                 "cmp byte ptr [rax], %c[e1] \n"
                 "jz 1f \n"
@@ -53,11 +53,11 @@ namespace tooltipAndButtonText {
 
                 "push rax \n"
                 "lea rdi, [rbp - 0x2740] \n"
-                "movzx rsi, byte ptr [r10+1] \n"
+                "movzx rsi, byte ptr [rbx+1] \n"
                 "call [rip + _g_CString_AppendCharAddress] \n"
 
                 "lea rdi, [rbp - 0x2740] \n"
-                "movzx rsi, byte ptr [r10+2] \n"
+                "movzx rsi, byte ptr [rbx+2] \n"
                 "call [rip + _g_CString_AppendCharAddress] \n"
 
                 "pop rax \n"
