@@ -4,6 +4,7 @@ set(CMAKE_OSX_ARCHITECTURES "x86_64" CACHE STRING "Build for x86_64 only" FORCE)
 project(eu4dll_mac)
 
 set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 add_library(eu4dll_mac SHARED library.cpp library.h
         src/base.cpp
@@ -32,6 +33,8 @@ add_library(eu4dll_mac SHARED library.cpp library.h
         src/pinyinHelper.h)
 
 include(FetchContent)
+set(CPP_PINYIN_BUILD_STATIC ON CACHE BOOL "Build cpp-pinyin as a static library" FORCE)
+set(CPP_PINYIN_INSTALL OFF CACHE BOOL "Do not install cpp-pinyin from this project" FORCE)
 FetchContent_Declare(
         cpp-pinyin
         GIT_REPOSITORY https://github.com/wolfgitpr/cpp-pinyin.git

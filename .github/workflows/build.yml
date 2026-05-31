@@ -13,6 +13,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Configure CMake
         # 配置 CMake，生成目录为 build，设置为 Release 模式
@@ -21,6 +23,14 @@ jobs:
       - name: Build Project
         # 执行编译
         run: cmake --build build --config Release
+
+      - name: Verify cpp-pinyin Static Link
+        run: |
+          otool -L build/libeu4dll_mac.dylib
+          if otool -L build/libeu4dll_mac.dylib | grep -q 'libcpp-pinyin'; then
+            echo "::error::libeu4dll_mac.dylib still depends on libcpp-pinyin.dylib"
+            exit 1
+          fi
 
       - name: CodeSign Ad-Hoc
         # 对编译产物进行 Ad-hoc 签名
@@ -45,10 +55,24 @@ jobs:
           zip -r ../eu4dll_mac_build_${{ github.run_number }}.zip ./*
           cd ..
 
+      - name: Generate Release Body
+        run: |
+          previous_tag="$(git describe --tags --match 'b*' --abbrev=0 2>/dev/null || true)"
+
+          if [ -n "${previous_tag}" ]; then
+            git log "${previous_tag}..HEAD" --pretty=format:'* %s' > release_body.md
+          else
+            git log HEAD --pretty=format:'* %s' > release_body.md
+          fi
+
+          if ! grep -q '^\* ' release_body.md; then
+            echo "* No commits found." > release_body.md
+          fi
+
       - name: Publish GitHub Release
         uses: softprops/action-gh-release@v2
         with:
           tag_name: b${{ github.run_number }} # 自动创建Tag
           name: Release build_${{ github.run_number }} # 发布标题
-          body: New Build Version
+          body_path: release_body.md
           files: eu4dll_mac_build_${{ github.run_number }}.zip # 绑定的压缩包文件
