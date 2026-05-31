@@ -29,7 +29,7 @@ void ShowErrorMessageBox(const char *title, const char *msg) {
     );
     if (cfTitle) CFRelease(cfTitle);
     if (cfMsg) CFRelease(cfMsg);
-    if (result == 0){
+    if (result == 0) {
         exit(0);
     }
 }
@@ -45,9 +45,9 @@ static void ctor() {
         return;
     }
     auto eu4VerStr = std::string((char *) address);
-    if (eu4VerStr.rfind("EU4 v1.37", 0) != 0) {
+    if (eu4VerStr.find("EU4 v1.37") != 0) {
         printf("eu4dll_mac [Main] 不受支持的版本：%s \n", eu4VerStr.c_str());
-        ShowErrorMessageBox("Unsupported Game Version",eu4VerStr.c_str());
+        ShowErrorMessageBox("Unsupported Game Version", eu4VerStr.c_str());
         return;
     }
     printf("eu4dll_mac [Main] eu4版本号：%s\n", eu4VerStr.c_str());
@@ -68,7 +68,7 @@ static void ctor() {
     saveFileName::install();
     // 允许输入非ASCII编码
     input::install();
-    // 游戏右上角日期格式改为 年月日
+    // 符合东亚文化的本地化修改
     localization::install();
 
     printf("eu4dll_mac [Main] 所有插件加载完毕！\n");
@@ -93,6 +93,6 @@ static void ctor() {
             msgContent += tracker.findFnFailedRecord;
             msgContent += "\n";
         }
-        ShowErrorMessageBox("eu4dll_mac error",msgContent.c_str());
+        ShowErrorMessageBox("eu4dll_mac error", msgContent.c_str());
     }
 }
