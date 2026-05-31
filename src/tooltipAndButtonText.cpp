@@ -107,6 +107,7 @@ namespace tooltipAndButtonText {
 
         printf("eu4dll_mac [Success] %s HookJMP 匹配地址:0x%lx Hook地址:0x%lx 返回地址:0x%lx\n", __func__,
                matchAddress, leaAddress, g_RenderToTexture_1_BypassAddr);
+        OptimizeNakedHook((uintptr_t) naked_CBitmapFont_RenderToTexture_1);
         SET_SUCCESS();
     }
 
@@ -158,6 +159,7 @@ namespace tooltipAndButtonText {
         printf("eu4dll_mac [Success] %s HookJMP 匹配地址:0x%lx Hook地址:0x%lx 返回地址:0x%lx 返回地址2:0x%lx\n",
                __func__,
                matchAddress, leaAddress, g_RenderToTexture_2_RetAddr, g_RenderToTexture_2_BypassAddr);
+        OptimizeNakedHook((uintptr_t) naked_CBitmapFont_RenderToTexture_2);
         SET_SUCCESS();
     }
 
@@ -244,6 +246,7 @@ namespace tooltipAndButtonText {
 
         printf("eu4dll_mac [Success] %s HookJMP 匹配地址:0x%lx Hook地址:0x%lx 返回地址:0x%lx\n", __func__,
                matchAddress, leaAddress, g_RenderToTexture_3_BypassAddr);
+        OptimizeNakedHook((uintptr_t) naked_CBitmapFont_RenderToTexture_3);
         SET_SUCCESS();
     }
 

@@ -343,6 +343,7 @@ namespace localization {
         printf("eu4dll_mac [Success] %s HookJMP 匹配地址:0x%lx 写入地址:0x%lx 返回地址:0x%lx\n",
                __func__,
                matchAddress, address, g_CMonarch_GetFullName_retAddr);
+        OptimizeNakedHook((uintptr_t) naked_CMonarch_GetFullName);
         SET_SUCCESS();
     }
 
@@ -399,6 +400,7 @@ namespace localization {
         printf("eu4dll_mac [Success] %s HookJMP 匹配地址:0x%lx 写入地址:0x%lx 返回地址:0x%lx\n",
                __func__,
                matchAddress, address, g_CCountry_GetNewRepublicName_RetAddr);
+        OptimizeNakedHook((uintptr_t) naked_CCountry_GetNewRepublicName);
         SET_SUCCESS();
     }
 

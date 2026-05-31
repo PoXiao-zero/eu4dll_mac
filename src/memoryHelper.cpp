@@ -48,7 +48,8 @@ bool WriteMemory(uintptr_t address, const uint8_t *data, size_t size) {
     mach_port_t task = mach_task_self();
     mach_vm_address_t dst = address;
     // 1. 解除保护：必须使用 VM_PROT_COPY 强制触发写时复制 (Copy-On-Write)
-    kern_return_t kr = mach_vm_protect(task, dst, size, FALSE, VM_PROT_READ | VM_PROT_WRITE | VM_PROT_COPY);
+    kern_return_t kr = mach_vm_protect(task, dst, size, FALSE,
+                                       VM_PROT_READ | VM_PROT_WRITE | VM_PROT_COPY | VM_PROT_EXECUTE);
     if (kr != KERN_SUCCESS) {
         std::cerr << "[WriteMemory] Failed to unprotect memory at 0x"
                   << std::hex << address << std::dec
@@ -219,5 +220,54 @@ bool ReplaceCall(uintptr_t address, uintptr_t hookPtr) {
         payload[0] = 0xE8;
         std::memcpy(&payload[1], &offset, sizeof(offset));
         return WriteMemory(address, payload, 5);
+    }
+}
+
+void OptimizeNakedHook(uintptr_t func_ptr, size_t max_scan_size) {
+    if (!func_ptr) return;
+
+    auto *code = reinterpret_cast<uint8_t *>(func_ptr);
+
+    for (size_t i = 0; i <= max_scan_size - 6;) {
+        uint8_t b0 = code[i];
+        uint8_t b1 = code[i + 1];
+
+        // 匹配 FF 25 (JMP) 或 FF 15 (CALL)
+        if (b0 == 0xFF && (b1 == 0x25 || b1 == 0x15)) {
+            bool isCall = (b1 == 0x15);
+            uintptr_t instruction_addr = func_ptr + i;
+
+            int32_t offset = *reinterpret_cast<int32_t *>(&code[i + 2]);
+            uintptr_t variable_addr = instruction_addr + 6 + offset;
+
+            uintptr_t target_addr = *reinterpret_cast<uintptr_t *>(variable_addr);
+            // 计算新的相对跳转偏移量
+            int64_t offset64 = static_cast<int64_t>(target_addr) - static_cast<int64_t>(instruction_addr + 5);
+
+            // 检查 2GB 的 x86_64 rel32 安全边界
+            if (offset64 >= -2147483648LL && offset64 <= 2147483647LL) {
+                uint8_t patch_data[6];
+                patch_data[0] = isCall ? 0xE8 : 0xE9;
+                *reinterpret_cast<int32_t *>(&patch_data[1]) = static_cast<int32_t>(offset64);
+                patch_data[5] = 0x90; // NOP
+                if (WriteMemory(instruction_addr, patch_data, 6)) {
+                    printf("[+] Optimized %s at %p -> Target: %p\n",
+                           isCall ? "CALL" : "JMP", (void *) instruction_addr, (void *) target_addr);
+                }
+            }
+
+            i += 6;
+
+            if (!isCall) {
+                // naked hook函数结尾基本都是 0F 0B，以此来判断是否需要提前结束扫描
+                if (i + 1 < max_scan_size && code[i] == 0x0F && code[i + 1] == 0x0B) {
+                    printf("[i] Found ud2 right after JMP. Stopping scan for this function. base_addr:0x%lx i:0x%lx\n",
+                           func_ptr, i);
+                    break;
+                }
+            }
+        } else {
+            i++;
+        }
     }
 }

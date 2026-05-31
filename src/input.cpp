@@ -125,6 +125,7 @@ namespace input {
         g_InputUtf8ToEscapedStr_Addr = (void *) inputUtf8ToEscapedStr;
         printf("eu4dll_mac [Success] %s HookJMP 匹配地址:0x%lx Hook地址:0x%lx 返回地址:0x%lx\n", __func__,
                matchAddress, leaAddress, g_HandlePdxEvents_1_RetAddr);
+        OptimizeNakedHook((uintptr_t) naked_CSdlEvents_HandlePdxEvents_1);
         SET_SUCCESS();
     }
 
@@ -220,6 +221,7 @@ namespace input {
         printf("eu4dll_mac [Success] %s HookJMP 匹配地址:0x%lx Hook地址:0x%lx 返回地址:0x%lx 返回地址2:0x%lx\n",
                __func__,
                matchAddress, leaAddress, g_HandleKeyEvent_1_RetAddr, g_HandleKeyEvent_1_BypassAddr);
+        OptimizeNakedHook((uintptr_t) naked_CTextBuffer_HandleKeyEvent_1);
         SET_SUCCESS();
     }
 
@@ -259,6 +261,7 @@ namespace input {
         HookJMP(leaAddress, (uintptr_t) naked_CSdlEvents_HandlePdxEvents_2);
         printf("eu4dll_mac [Success] %s HookJMP 匹配地址:0x%lx Hook地址:0x%lx 返回地址:0x%lx\n", __func__,
                matchAddress, leaAddress, g_HandlePdxEvents_2_RetAddr);
+        OptimizeNakedHook((uintptr_t) naked_CSdlEvents_HandlePdxEvents_2);
         SET_SUCCESS();
     }
 

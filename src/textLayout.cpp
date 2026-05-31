@@ -102,6 +102,7 @@ namespace textLayout {
         HookJMP(leaAddress, (uintptr_t) naked_CBitmapFont_GetHeightOfString);
         printf("eu4dll_mac [Success] %s HookJMP 匹配地址:0x%lx Hook地址:0x%lx 返回地址:0x%lx\n", __func__,
                matchAddress, leaAddress, g_GetHeightOfString_BypassAddr);
+        OptimizeNakedHook((uintptr_t) naked_CBitmapFont_GetHeightOfString);
         SET_SUCCESS();
     }
 
@@ -191,6 +192,7 @@ namespace textLayout {
         printf("eu4dll_mac [Success] %s HookJMP 匹配地址:0x%lx Hook地址:0x%lx 返回地址:0x%lx 返回地址2:0x%lx\n",
                __func__,
                matchAddress, leaAddress, g_GetWidthOfString_RetAddr, g_GetWidthOfString_BypassAddr);
+        OptimizeNakedHook((uintptr_t) naked_CBitmapFont_GetWidthOfString);
         SET_SUCCESS();
     }
 
@@ -273,6 +275,7 @@ namespace textLayout {
         HookJMP(leaAddress, (uintptr_t) naked_CBitmapFont_GetRequiredSize);
         printf("eu4dll_mac [Success] %s HookJMP 匹配地址:0x%lx Hook地址:0x%lx 返回地址:0x%lx\n", __func__,
                matchAddress, leaAddress, g_GetRequiredSize_BypassAddr);
+        OptimizeNakedHook((uintptr_t) naked_CBitmapFont_GetRequiredSize);
         SET_SUCCESS();
     }
 
@@ -354,6 +357,7 @@ namespace textLayout {
         HookJMP(leaAddress, (uintptr_t) naked_CBitmapFont_GetActualRealRequiredSizeActually_1);
         printf("eu4dll_mac [Success] %s HookJMP 匹配地址:0x%lx Hook地址:0x%lx 返回地址:0x%lx\n", __func__,
                matchAddress, leaAddress, g_GetActualRealRequiredSizeActually_1_BypassAddr);
+        OptimizeNakedHook((uintptr_t) naked_CBitmapFont_GetActualRealRequiredSizeActually_1);
         SET_SUCCESS();
     }
 
@@ -436,6 +440,7 @@ namespace textLayout {
         HookJMP(leaAddress, (uintptr_t) naked_CBitmapFont_GetActualRequiredSize);
         printf("eu4dll_mac [Success] %s HookJMP 匹配地址:0x%lx Hook地址:0x%lx 返回地址:0x%lx\n", __func__,
                matchAddress, leaAddress, g_GetActualRequiredSize_BypassAddr);
+        OptimizeNakedHook((uintptr_t) naked_CBitmapFont_GetActualRequiredSize);
         SET_SUCCESS();
     }
 
@@ -453,10 +458,7 @@ namespace textLayout {
             return;
         }
         uintptr_t leaAddress = matchAddress;
-        WriteMemory(leaAddress,
-                    {0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90,
-                     0x90,
-                     0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90});
+        WriteMemory(leaAddress, {0xEB, 0x1A, 0x90, 0x90, 0x90, 0x90});
         printf("eu4dll_mac [Success] %s WriteMemory 匹配地址:0x%lx 写入地址:0x%lx\n", __func__,
                matchAddress, leaAddress);
         SET_SUCCESS();
@@ -505,6 +507,7 @@ namespace textLayout {
         HookJMP(leaAddress, (uintptr_t) naked_CBitmapFont_GetActualRealRequiredSizeActually_2);
         printf("eu4dll_mac [Success] %s HookJMP 匹配地址:0x%lx Hook地址:0x%lx 返回地址:0x%lx\n", __func__,
                matchAddress, leaAddress, g_GetActualRealRequiredSizeActually_2_BypassAddr);
+        OptimizeNakedHook((uintptr_t) naked_CBitmapFont_GetActualRealRequiredSizeActually_2);
         SET_SUCCESS();
     }
 
@@ -576,6 +579,7 @@ namespace textLayout {
         HookJMP(leaAddress, (uintptr_t) naked_CBitmapFont_GetActualRealRequiredSizeActually_3);
         printf("eu4dll_mac [Success] %s HookJMP 匹配地址:0x%lx Hook地址:0x%lx 返回地址:0x%lx\n", __func__,
                matchAddress, leaAddress, g_GetActualRealRequiredSizeActually_3_BypassAddr);
+        OptimizeNakedHook((uintptr_t) naked_CBitmapFont_GetActualRealRequiredSizeActually_3);
         SET_SUCCESS();
     }
 

@@ -53,6 +53,7 @@ namespace saveFileName {
         HookJMP(leaAddress, (uintptr_t) naked_CIngameSaveMenu_SaveGame);
         printf("eu4dll_mac [Success] %s HookJMP 匹配地址:0x%lx Hook地址:0x%lx 返回地址:0x%lx\n", __func__,
                matchAddress, leaAddress, g_SaveGame_RetAddr);
+        OptimizeNakedHook((uintptr_t) naked_CIngameSaveMenu_SaveGame);
         SET_SUCCESS();
     }
 
@@ -90,6 +91,7 @@ namespace saveFileName {
         HookJMP(leaAddress, (uintptr_t) naked_CLocalSavegameItem_CLocalSavegameItem);
         printf("eu4dll_mac [Success] %s HookJMP 匹配地址:0x%lx Hook地址:0x%lx 返回地址:0x%lx\n", __func__,
                matchAddress, leaAddress, g_CLocalSavegameItem_RetAddr);
+        OptimizeNakedHook((uintptr_t) naked_CLocalSavegameItem_CLocalSavegameItem);
         SET_SUCCESS();
     }
 
@@ -126,6 +128,7 @@ namespace saveFileName {
         HookJMP(leaAddress, (uintptr_t) naked_CConfirmSave_CConfirmSave);
         printf("eu4dll_mac [Success] %s HookJMP 匹配地址:0x%lx Hook地址:0x%lx 返回地址:0x%lx\n", __func__,
                matchAddress, leaAddress, g_CConfirmSave_RetAddr);
+        OptimizeNakedHook((uintptr_t) naked_CConfirmSave_CConfirmSave);
         SET_SUCCESS();
     }
 
@@ -161,6 +164,7 @@ namespace saveFileName {
         HookJMP(leaAddress, (uintptr_t) naked_CLocalSavegameItem_UpdateHeaderInfo);
         printf("eu4dll_mac [Success] %s HookJMP 匹配地址:0x%lx Hook地址:0x%lx 返回地址:0x%lx\n", __func__,
                matchAddress, leaAddress, g_UpdateHeaderInfo_RetAddr);
+        OptimizeNakedHook((uintptr_t) naked_CLocalSavegameItem_UpdateHeaderInfo);
         SET_SUCCESS();
     }
 
@@ -199,6 +203,7 @@ namespace saveFileName {
         g_EU4LoadGameHelper_Load_Addr = findFn("_ZN17EU4LoadGameHelper4LoadERNS_19SLoadGameParametersE");
         printf("eu4dll_mac [Success] %s HookJMP 匹配地址:0x%lx Hook地址:0x%lx 返回地址:0x%lx\n", __func__,
                matchAddress, leaAddress, g_DoLoadGame_RetAddr);
+        OptimizeNakedHook((uintptr_t) naked_CIngameLoadMenu_DoLoadGame);
         SET_SUCCESS();
     }
 
@@ -234,6 +239,7 @@ namespace saveFileName {
         HookJMP(leaAddress, (uintptr_t) naked_CFrontEnd_GetCurrentTooltip);
         printf("eu4dll_mac [Success] %s HookJMP 匹配地址:0x%lx Hook地址:0x%lx 返回地址:0x%lx\n", __func__,
                matchAddress, leaAddress, g_GetCurrentTooltip_RetAddr);
+        OptimizeNakedHook((uintptr_t) naked_CFrontEnd_GetCurrentTooltip);
         SET_SUCCESS();
     }
 
@@ -273,6 +279,7 @@ namespace saveFileName {
         HookJMP(leaAddress, (uintptr_t) naked_CConfirmLocalDeleteInGame_CConfirmLocalDeleteInGame);
         printf("eu4dll_mac [Success] %s HookJMP 匹配地址:0x%lx Hook地址:0x%lx 返回地址:0x%lx\n", __func__,
                matchAddress, leaAddress, g_CConfirmLocalDeleteInGame_RetAddr);
+        OptimizeNakedHook((uintptr_t) naked_CConfirmLocalDeleteInGame_CConfirmLocalDeleteInGame);
         SET_SUCCESS();
     }
 

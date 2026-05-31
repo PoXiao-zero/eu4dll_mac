@@ -89,6 +89,7 @@ namespace text3D {
         HookJMP(leaAddress, (uintptr_t) naked_CBitmapFont_Render3d_1);
         printf("eu4dll_mac [Success] %s HookJMP 匹配地址:0x%lx Hook地址:0x%lx 返回地址:0x%lx\n", __func__,
                matchAddress, leaAddress, g_Render3d_1_BypassAddr);
+        OptimizeNakedHook((uintptr_t) naked_CBitmapFont_Render3d_1);
         SET_SUCCESS();
     }
 
@@ -183,6 +184,7 @@ namespace text3D {
         HookJMP(leaAddress, (uintptr_t) naked_CBitmapFont_Render3d_2);
         printf("eu4dll_mac [Success] %s HookJMP 匹配地址:0x%lx Hook地址:0x%lx 返回地址:0x%lx\n", __func__,
                matchAddress, leaAddress, g_Render3d_2_BypassAddr);
+        OptimizeNakedHook((uintptr_t) naked_CBitmapFont_Render3d_2);
         SET_SUCCESS();
     }
 

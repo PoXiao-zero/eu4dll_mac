@@ -91,6 +91,7 @@ namespace base {
         HookJMP(address, (uintptr_t) naked_CBitmapFont_ParseFontFile_2);
         printf("eu4dll_mac [Success] %s HookJMP 匹配地址:0x%lx Hook地址:0x%lx 返回地址:0x%lx\n", __func__, matchAddress,
                address, g_ParseFontFile_RetAddr);
+        OptimizeNakedHook((uintptr_t) naked_CBitmapFont_ParseFontFile_2);
         SET_SUCCESS();
     }
 

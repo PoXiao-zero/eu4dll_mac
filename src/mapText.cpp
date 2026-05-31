@@ -95,6 +95,7 @@ namespace mapText {
         printf("eu4dll_mac [Success] %s HookJMP 匹配地址:0x%lx Hook地址:0x%lx 返回地址:0x%lx 返回地址2:0x%lx\n",
                __func__,
                matchAddress, leaAddress, g_AddNameArea_1_RetAddr, g_AddNameArea_1_BypassAddr);
+        OptimizeNakedHook((uintptr_t) naked_CGenerateNamesWork_AddNameArea_1);
         SET_SUCCESS();
     }
 
@@ -193,6 +194,7 @@ namespace mapText {
         ReplaceCall(leaAddress, (uintptr_t) proxy_CGenerateNamesWork_AddNameArea_ToUpper_2);
         printf("eu4dll_mac [Success] %s ReplaceCall 匹配地址:0x%lx 写入地址:0x%lx ToUpper地址:%p\n", __func__,
                matchAddress, leaAddress, g_OriginalToUpper_Addr);
+        OptimizeNakedHook((uintptr_t) proxy_CGenerateNamesWork_AddNameArea_ToUpper_2);
         SET_SUCCESS();
     }
 
@@ -278,6 +280,7 @@ namespace mapText {
         HookJMP(leaAddress, (uintptr_t) naked_CGenerateNamesWork_AddNameArea_3);
         printf("eu4dll_mac [Success] %s HookJMP 匹配地址:0x%lx Hook地址:0x%lx 返回地址:0x%lx\n", __func__,
                matchAddress, leaAddress, g_AddNameArea_3_BypassAddr);
+        OptimizeNakedHook((uintptr_t) naked_CGenerateNamesWork_AddNameArea_3);
         SET_SUCCESS();
     }
 
@@ -363,6 +366,7 @@ namespace mapText {
         HookJMP(leaAddress, (uintptr_t) naked_CBitmapFont_FillVertexBuffer_1);
         printf("eu4dll_mac [Success] %s HookJMP 匹配地址:0x%lx Hook地址:0x%lx 返回地址:0x%lx\n", __func__,
                matchAddress, leaAddress, g_FillVertexBuffer_1_BypassAddr);
+        OptimizeNakedHook((uintptr_t) naked_CBitmapFont_FillVertexBuffer_1);
         SET_SUCCESS();
     }
 
@@ -457,6 +461,7 @@ namespace mapText {
         HookJMP(leaAddress, (uintptr_t) naked_CBitmapFont_FillVertexBuffer_2);
         printf("eu4dll_mac [Success] %s HookJMP 匹配地址:0x%lx Hook地址:0x%lx 返回地址:0x%lx\n", __func__,
                matchAddress, leaAddress, g_FillVertexBuffer_2_BypassAddr);
+        OptimizeNakedHook((uintptr_t) naked_CBitmapFont_FillVertexBuffer_2);
         SET_SUCCESS();
     }
 
@@ -547,6 +552,7 @@ namespace mapText {
 
         printf("eu4dll_mac [Success] %s HookJMP 匹配地址:0x%lx Hook地址:0x%lx 返回地址:0x%lx\n", __func__,
                matchAddress, leaAddress, g_CurveText_1_BypassAddr);
+        OptimizeNakedHook((uintptr_t) naked_CurveText_1);
         SET_SUCCESS();
     }
 
@@ -584,6 +590,7 @@ namespace mapText {
 
         printf("eu4dll_mac [Success] %s HookJMP 匹配地址:0x%lx Hook地址:0x%lx 返回地址:0x%lx\n", __func__,
                matchAddress, leaAddress, g_CurveText_2_BypassAddr);
+        OptimizeNakedHook((uintptr_t) naked_CurveText_2);
         SET_SUCCESS();
     }
 
@@ -619,6 +626,7 @@ namespace mapText {
         HookJMP(leaAddress, (uintptr_t) naked_CurveText_3);
         printf("eu4dll_mac [Success] %s HookJMP 匹配地址:0x%lx Hook地址:0x%lx 返回地址:0x%lx\n", __func__,
                matchAddress, leaAddress, g_CurveText_3_BypassAddr);
+        OptimizeNakedHook((uintptr_t) naked_CurveText_3);
         SET_SUCCESS();
     }
 
@@ -744,6 +752,7 @@ namespace mapText {
         HookJMP(leaAddress, (uintptr_t) naked_CCountryNameCollection_AddNudgedNames);
         printf("eu4dll_mac [Success] %s HookJMP 匹配地址:0x%lx Hook地址:0x%lx 返回地址:0x%lx\n", __func__,
                matchAddress, leaAddress, g_AddNudgedNames_BypassAddr);
+        OptimizeNakedHook((uintptr_t) naked_CCountryNameCollection_AddNudgedNames);
         SET_SUCCESS();
     }
 
