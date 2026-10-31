@@ -175,6 +175,59 @@ namespace localization {
         SET_SUCCESS();
     }
 
+    std::string::size_type replace_find(std::string &CountryName, std::string *searchStr) {
+        auto pinyin = *PinyinHelper::getInstance().getPinyin(CountryName);
+        bool flag = std::any_of(pinyin.begin(), pinyin.end(), [&searchStr](const std::string &sub) {
+            return sub.find(*searchStr) != std::string::npos;
+        });
+        if (flag) return 1;
+        return std::string::npos;
+    }
+
+/**
+ Hook函数：CLedger::IsFiltered 报表界面搜索过滤
+ 作用：支持拼音、首字母过滤
+ */
+    void install_CLedger_IsFiltered() {
+        TRACK_FUNCTION();
+        uintptr_t matchAddress = ScanMainModule(
+                "31 F6 31 D2 31 C9 E8 ? ? ? ? 48 8D 7D 88 48 89 C6 E8 ? ? ? ? 48 8D 7D 88 E8 ? ? ? ? 48 8D 7D 88 48 8D 75 A0");
+        if (matchAddress == 0) {
+            printf("eu4dll_mac [Error] %s 特征码查找失败！\n", __func__);
+            return;
+        }
+        uintptr_t address = matchAddress + 0x17;
+        WriteMemory(address, {0xEB, 0X7});
+        uintptr_t address1 = address + 0x13;
+        ReplaceCall(address1, (uintptr_t) replace_find);
+        printf("eu4dll_mac [Success] %s ReplaceCall 匹配地址:0x%lx 写入地址:0x%lx 写入地址1:0x%lx\n",
+               __func__,
+               matchAddress, address, address1);
+        SET_SUCCESS();
+    }
+
+/**
+ Hook函数：CCountryDiplomacyView::UpdateOpinions 国家外交界面好感度搜索过滤
+ 作用：支持拼音、首字母过滤
+ */
+    void install_CCountryDiplomacyView_UpdateOpinions() {
+        TRACK_FUNCTION();
+        uintptr_t matchAddress = ScanMainModule(
+                "4C 89 DF 31 F6 31 D2 31 C9 E8 ? ? ? ? 48 8D 5D 80 48 89 DF 48 89 C6 E8");
+        if (matchAddress == 0) {
+            printf("eu4dll_mac [Error] %s 特征码查找失败！\n", __func__);
+            return;
+        }
+        uintptr_t address = matchAddress + 0x1D;
+        WriteMemory(address, {0xEB, 0XE});
+        uintptr_t address1 = address + 0x1C;
+        ReplaceCall(address1, (uintptr_t) replace_find);
+        printf("eu4dll_mac [Success] %s ReplaceCall 匹配地址:0x%lx 写入地址:0x%lx 写入地址1:0x%lx\n",
+               __func__,
+               matchAddress, address, address1);
+        SET_SUCCESS();
+    }
+
     std::string GetHostResourcePath() {
         CFBundleRef mainBundle = CFBundleGetMainBundle();
         if (!mainBundle) return "";
@@ -234,7 +287,12 @@ namespace localization {
                     break;
                 }
                 Pinyin::setDictionaryPath(patch);
+                //F键搜索
                 install_CGotoBoxSearchList_Process();
+                //报表页搜索
+                install_CLedger_IsFiltered();
+                //国家外交页面好感度搜索
+                install_CCountryDiplomacyView_UpdateOpinions();
                 break;
             }
             printf("Mod [%d]: %s\n", i, modNameOrPath.c_str());
