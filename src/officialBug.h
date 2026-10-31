@@ -1,0 +1,3 @@
+namespace officialBug {
+    void install();
+}

@@ -30,7 +30,9 @@ add_library(eu4dll_mac SHARED library.cpp library.h
         src/localization.cpp
         src/localization.h
         src/pinyinHelper.cpp
-        src/pinyinHelper.h)
+        src/pinyinHelper.h
+        src/officialBug.cpp
+        src/officialBug.h)
 
 include(FetchContent)
 set(CPP_PINYIN_BUILD_STATIC ON CACHE BOOL "Build cpp-pinyin as a static library" FORCE)

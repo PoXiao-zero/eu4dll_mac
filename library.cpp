@@ -11,6 +11,7 @@
 #include "./src/input.h"
 #include "./src/global.h"
 #include "./src/localization.h"
+#include "./src/officialBug.h"
 
 void hello() {
     std::cout << "Hello, World!" << std::endl;
@@ -70,6 +71,8 @@ static void ctor() {
     input::install();
     // 符合东亚文化的本地化修改
     localization::install();
+    // 解决游戏官方BUG
+    officialBug::install();
 
     printf("eu4dll_mac [Main] 所有插件加载完毕！\n");
 
